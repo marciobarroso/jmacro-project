@@ -4,3 +4,6 @@
 */.classpath
 */target
 */logs
+.project
+.classpath
+.settings
