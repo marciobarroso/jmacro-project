@@ -1,0 +1,21 @@
+2017-01-03 18:56:20.508 | DEBUG | entQueue-0 | play.jmacro.app.Main:52    | Initialize main container in 0:0:9.355
+2017-01-03 18:57:40.099 | DEBUG | entQueue-0 | play.jmacro.app.Main:52    | Initialize main container in 0:0:0.89
+2017-01-03 18:57:40.129 | DEBUG | entQueue-0 | play.jmacro.app.Main:55    | Load initialPanel in 0:0:0.135
+2017-01-03 18:57:46.653 | DEBUG | entQueue-0 | play.jmacro.app.Main:52    | Initialize main container in 0:0:0.80
+2017-01-03 18:57:46.700 | DEBUG | entQueue-0 | play.jmacro.app.Main:55    | Load initialPanel in 0:0:0.141
+2017-01-03 18:58:37.496 | DEBUG | entQueue-0 | play.jmacro.app.Main:52    | Initialize main container in 0:0:0.109
+2017-01-03 18:58:37.525 | DEBUG | entQueue-0 | play.jmacro.app.Main:55    | Load initialPanel in 0:0:0.151
+2017-01-03 18:58:37.553 | DEBUG | entQueue-0 | play.jmacro.app.Main:58    | Populate menu in 0:0:0.180
+2017-01-03 18:58:37.553 | DEBUG | entQueue-0 | play.jmacro.app.Main:61    | Finish in 0:0:0.180
+2017-01-03 18:59:25.764 | DEBUG | entQueue-0 | play.jmacro.app.Main:52    | Initialize main container in 0:0:0.78
+2017-01-03 18:59:25.806 | DEBUG | entQueue-0 | play.jmacro.app.Main:55    | Load initialPanel in 0:0:0.144
+2017-01-03 18:59:25.830 | DEBUG | entQueue-0 | play.jmacro.app.Main:58    | Populate menu in 0:0:0.169
+2017-01-03 18:59:25.831 | DEBUG | entQueue-0 | play.jmacro.app.Main:61    | Finish in 0:0:0.170
+2017-01-03 19:01:16.771 | DEBUG | entQueue-0 | play.jmacro.app.Main:52    | Initialize main container in 0:0:0.85
+2017-01-03 19:01:16.803 | DEBUG | entQueue-0 | play.jmacro.app.Main:55    | Load initialPanel in 0:0:0.129
+2017-01-03 19:02:07.913 | DEBUG | entQueue-0 | play.jmacro.app.Main:52    | Initialize main container in 0:0:0.78
+2017-01-03 19:02:07.955 | DEBUG | entQueue-0 | play.jmacro.app.Main:55    | Load initialPanel in 0:0:0.137
+2017-01-03 19:03:33.461 | DEBUG | entQueue-0 | play.jmacro.app.Main:52    | Initialize main container in 0:0:0.138
+2017-01-03 19:03:33.487 | DEBUG | entQueue-0 | play.jmacro.app.Main:55    | Load initialPanel in 0:0:0.191
+2017-01-03 19:03:33.512 | DEBUG | entQueue-0 | play.jmacro.app.Main:58    | Populate menu in 0:0:0.217
+2017-01-03 19:03:33.513 | DEBUG | entQueue-0 | play.jmacro.app.Main:61    | Finish in 0:0:0.217
