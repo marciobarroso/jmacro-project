@@ -1,7 +1,8 @@
-*/.settings
-*/bin
-*/target
-*/.project
-*/.classpath
+*DS_Store
+.settings
+.project
+.classpath
 */dependency-reduced-pom.xml
 */*.log
+*/bin
+*/target
