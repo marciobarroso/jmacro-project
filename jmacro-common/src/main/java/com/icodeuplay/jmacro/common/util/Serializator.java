@@ -16,7 +16,7 @@ public class Serializator {
 	public static void serialize(Serializable object, String key) {
 		try {
 			String filename = key.concat(SERIALIZATOR_KEY);
-			File file = new File(filename);
+			File file = FileUtils.createTempFile(filename);
 			file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(file);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -33,7 +33,7 @@ public class Serializator {
 	public static Serializable unserialize(String key) {
 		try {
 			String filename = key.concat(SERIALIZATOR_KEY);
-			File file = new File(filename);
+			File file = FileUtils.createTempFile(filename);
 			if (file.exists()) {
 
 				FileInputStream fis = new FileInputStream(file);

@@ -18,6 +18,7 @@ import com.icodeuplay.jmacro.app.screens.about.AboutView;
 import com.icodeuplay.jmacro.app.screens.help.HelpView;
 import com.icodeuplay.jmacro.app.screens.initial.InitialPanel;
 import com.icodeuplay.jmacro.app.util.ImageUtils;
+import com.icodeuplay.jmacro.app.util.LookAndFeelSelector;
 import com.icodeuplay.jmacro.common.exceptions.JMacroException;
 import com.icodeuplay.jmacro.common.util.Benchmark;
 import com.icodeuplay.jmacro.common.util.MessageUtils;
@@ -38,7 +39,7 @@ public class Main {
 
 	private JMenuItem helpMenuItem;
 	private JMenuItem aboutMenuItem;
-	// private JMenuItem themeMenuItem;
+	private JMenuItem themeMenuItem;
 
 	private Benchmark benchmark;
 
@@ -74,21 +75,20 @@ public class Main {
 
 		this.helpMenuItem = new JMenuItem(MessageUtils.getString("application.label.menu.help"));
 		this.aboutMenuItem = new JMenuItem(MessageUtils.getString("application.label.menu.help.about"));
-		// this.themeMenuItem = new
-		// JMenuItem(MessageUtils.getString("application.label.menu.help.theme"));
+		this.themeMenuItem = new JMenuItem(MessageUtils.getString("application.label.menu.help.theme"));
 
 		this.processManagerItem.setIcon(ImageUtils.getImageByKey("app.icon.processmanager"));
 		this.exit.setIcon(ImageUtils.getImageByKey("app.icon.exit"));
 		this.helpMenuItem.setIcon(ImageUtils.getImageByKey("app.icon.help"));
 		this.aboutMenuItem.setIcon(ImageUtils.getImageByKey("app.icon.about"));
-		// this.themeMenuItem.setIcon(image.getImageByKey("application.images.icon.theme"));
+		this.themeMenuItem.setIcon(ImageUtils.getImageByKey("app.icon.theme"));
 
 		this.applicationMenu.add(processManagerItem);
 		this.applicationMenu.addSeparator();
 		this.applicationMenu.add(exit);
 
 		this.helpMenu.add(helpMenuItem);
-		// this.helpMenu.add(themeMenuItem);
+		this.helpMenu.add(themeMenuItem);
 		this.helpMenu.addSeparator();
 		this.helpMenu.add(aboutMenuItem);
 
@@ -111,11 +111,11 @@ public class Main {
 			}
 		});
 
-		/*
-		 * this.themeMenuItem.addActionListener(new ActionListener() { public
-		 * void actionPerformed(ActionEvent e) {
-		 * LookAndFeelSelector.selectStyle(Main.this.containner); } });
-		 */
+		this.themeMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LookAndFeelSelector.selectStyle(Main.this.containner);
+			}
+		});
 
 		this.aboutMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -129,6 +129,7 @@ public class Main {
 		processManagerItem.setFont(new Font("Verdana", Font.PLAIN, 11));
 		helpMenuItem.setFont(new Font("Verdana", Font.PLAIN, 11));
 		aboutMenuItem.setFont(new Font("Verdana", Font.PLAIN, 11));
+		themeMenuItem.setFont(new Font("Verdana", Font.PLAIN, 11));
 	}
 
 	/**
@@ -138,11 +139,7 @@ public class Main {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-						if ("Windows".equals(info.getName())) {
-							UIManager.setLookAndFeel(info.getClassName());
-						}
-					}
+					LookAndFeelSelector.run();
 					new Main();
 				} catch (Exception e) {
 					throw new JMacroException(e);

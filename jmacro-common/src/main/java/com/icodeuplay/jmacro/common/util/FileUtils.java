@@ -376,7 +376,6 @@ public class FileUtils {
 		try {
 			file = new File(System.getProperty("java.io.tmpdir")
 					.concat(File.separator).concat(name));
-			file.createNewFile();
 		} catch (Exception e) {
 			throw new JMacroException(e);
 		}
