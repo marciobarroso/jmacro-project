@@ -28,11 +28,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.LoggerFactory;
-
-import com.icodeuplay.jmacro.common.exceptions.JMacroException;
-
 /**
  * Utilities methods to handle files
  */
@@ -55,14 +50,44 @@ public class FileUtils {
 		ALL_FILES = new FileFilter() {
 
 			public boolean accept(File file) {
-				if (file.isDirectory() && file.getName().equals("CVS")
-						|| file.getName().startsWith(".")) {
+				if (file.isDirectory() && file.getName().equals("CVS") || file.getName().startsWith(".")) {
 					return false;
 				} else {
 					return true;
 				}
 			}
 		};
+	}
+
+	public static void writeFile(File file, List<String> lines, Boolean append, Boolean breakLine) {
+		if (file == null)
+			throw new IllegalArgumentException("The file cannot be null");
+
+		FileWriter writer = null;
+		PrintWriter printer = null;
+		try {
+
+			if (!file.exists())
+				file.createNewFile();
+			if (!file.canWrite())
+				throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " cannot be write");
+
+			writer = new FileWriter(file, append);
+			printer = new PrintWriter(writer, breakLine);
+
+			for (String line : lines) {
+				if (breakLine)
+					printer.println(line);
+				else
+					printer.append(line);
+			}
+
+			printer.close();
+			writer.close();
+
+		} catch (IOException e) {
+			throw new RuntimeException("Error writing the file " + file.getAbsolutePath(), e);
+		}
 	}
 
 	/**
@@ -78,13 +103,12 @@ public class FileUtils {
 	 *            be generated.
 	 * @param breakLine
 	 *            If <code>true</code> breaks a line after append the text
-	 *            content. If <code>false</code>, just append the text content.
-	 * @throws JMacroException
+	 *            content. If <code>false</code>, just append the text
+	 *            content. @
 	 */
-	public static void writeFile(File file, String text, Boolean append,
-			Boolean breakLine) throws JMacroException {
+	public static void writeFile(File file, String text, Boolean append, Boolean breakLine) {
 		if (file == null)
-			throw new JMacroException("The file cannot be null");
+			throw new IllegalArgumentException("The file cannot be null");
 
 		FileWriter writer = null;
 		PrintWriter printer = null;
@@ -93,8 +117,7 @@ public class FileUtils {
 			if (!file.exists())
 				file.createNewFile();
 			if (!file.canWrite())
-				throw new JMacroException("The file " + file.getAbsolutePath()
-						+ " cannot be write");
+				throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " cannot be write");
 
 			writer = new FileWriter(file, append);
 			printer = new PrintWriter(writer, breakLine);
@@ -108,8 +131,7 @@ public class FileUtils {
 			writer.close();
 
 		} catch (IOException e) {
-			throw new JMacroException("Error writing the file "
-					+ file.getAbsolutePath(), e);
+			throw new RuntimeException("Error writing the file " + file.getAbsolutePath(), e);
 		}
 	}
 
@@ -126,11 +148,10 @@ public class FileUtils {
 	 *            be generated.
 	 * @param breakLine
 	 *            If <code>true</code> breaks a line after append the text
-	 *            content. If <code>false</code>, just append the text content.
-	 * @throws JMacroException
+	 *            content. If <code>false</code>, just append the text
+	 *            content. @
 	 */
-	public static void writeFile(String path, String text, Boolean append,
-			Boolean breakLine) throws JMacroException {
+	public static void writeFile(String path, String text, Boolean append, Boolean breakLine) {
 		File file = new File(path);
 		writeFile(file, text, append, breakLine);
 	}
@@ -140,18 +161,15 @@ public class FileUtils {
 	 * 
 	 * @param file
 	 *            The file that will be read
-	 * @return the file content as <code>String</code>
-	 * @throws JMacroException
+	 * @return the file content as <code>String</code> @
 	 */
-	public static String readFile(File file) throws JMacroException {
+	public static String readFile(File file) {
 		if (file == null)
-			throw new JMacroException("The file cannot be null");
+			throw new IllegalArgumentException("The file cannot be null");
 		if (!file.exists())
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " does not exists");
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " does not exists");
 		if (!file.canRead())
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " could not be read");
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " could not be read");
 
 		FileReader reader = null;
 		BufferedReader buffer = null;
@@ -174,8 +192,7 @@ public class FileUtils {
 			reader.close();
 			buffer.close();
 		} catch (IOException e) {
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " could not be read", e);
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " could not be read", e);
 		}
 
 		return content.toString();
@@ -186,10 +203,9 @@ public class FileUtils {
 	 * 
 	 * @param path
 	 *            file system path
-	 * @return the file content as <code>String</code>
-	 * @throws JMacroException
+	 * @return the file content as <code>String</code> @
 	 */
-	public static String readFile(String path) throws JMacroException {
+	public static String readFile(String path) {
 		return FileUtils.readFile(new File(path));
 	}
 
@@ -201,22 +217,17 @@ public class FileUtils {
 	 * @param recursive
 	 *            If <code>true</code> will be list recursively all files into
 	 *            the directories
-	 * @return All files in directory
-	 * @throws JMacroException
+	 * @return All files in directory @
 	 */
-	public static List<File> readDirectory(File directory, Boolean recursive,
-			FileFilter filter) throws JMacroException {
+	public static List<File> readDirectory(File directory, Boolean recursive, FileFilter filter) {
 		if (directory == null)
-			throw new JMacroException("The file cannot be null");
+			throw new IllegalArgumentException("The file cannot be null");
 		if (!directory.exists())
-			throw new JMacroException("The file " + directory.getAbsolutePath()
-					+ " does not exists");
+			throw new IllegalArgumentException("The file " + directory.getAbsolutePath() + " does not exists");
 		if (!directory.canRead())
-			throw new JMacroException("The file " + directory.getAbsolutePath()
-					+ " could not be read");
+			throw new IllegalArgumentException("The file " + directory.getAbsolutePath() + " could not be read");
 		if (!directory.isDirectory())
-			throw new JMacroException("The file " + directory.getAbsolutePath()
-					+ " is not a directory");
+			throw new IllegalArgumentException("The file " + directory.getAbsolutePath() + " is not a directory");
 
 		List<File> allFiles = new ArrayList<File>();
 
@@ -225,8 +236,7 @@ public class FileUtils {
 				if (filter.accept(file)) {
 					if (file.isDirectory()) {
 						if (recursive) {
-							allFiles.addAll(readDirectory(file, recursive,
-									filter));
+							allFiles.addAll(readDirectory(file, recursive, filter));
 						} else {
 							allFiles.add(file);
 						}
@@ -251,8 +261,7 @@ public class FileUtils {
 			public int compare(File fileOne, File fileTwo) {
 				if (fileOne == null || fileTwo == null)
 					return 0;
-				return fileOne.getAbsolutePath().compareTo(
-						fileTwo.getAbsolutePath());
+				return fileOne.getAbsolutePath().compareTo(fileTwo.getAbsolutePath());
 			}
 		});
 
@@ -264,35 +273,28 @@ public class FileUtils {
 	 * 
 	 * @param file
 	 *            The file that will be deleted
-	 * @return true if the file was successfully delete and false if was not
-	 * @throws JMacroException
+	 * @return true if the file was successfully delete and false if was not @
 	 */
-	public static Boolean deleteFile(File file) throws JMacroException {
+	public static Boolean deleteFile(File file) {
 		if (file == null)
-			throw new JMacroException("The file cannot be null");
+			throw new IllegalArgumentException("The file cannot be null");
 		if (!file.exists())
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " does not exists");
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " does not exists");
 		if (!file.canRead())
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " could not be read");
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " could not be read");
 
 		return file.delete();
 	}
 
-	private static List<File> readFiles(File directory, Boolean recursive,
-			Boolean includeDirectories) {
+	private static List<File> readFiles(File directory, Boolean recursive, Boolean includeDirectories) {
 		if (directory == null)
-			throw new JMacroException("The directory cannot be null");
+			throw new IllegalArgumentException("The directory cannot be null");
 		if (!directory.exists())
-			throw new JMacroException("The directory "
-					+ directory.getAbsolutePath() + " does not exists");
+			throw new IllegalArgumentException("The directory " + directory.getAbsolutePath() + " does not exists");
 		if (!directory.canRead())
-			throw new JMacroException("The directory "
-					+ directory.getAbsolutePath() + " could not be read");
+			throw new IllegalArgumentException("The directory " + directory.getAbsolutePath() + " could not be read");
 		if (!directory.isDirectory())
-			throw new JMacroException("The directory "
-					+ directory.getAbsolutePath() + " is not a directory");
+			throw new IllegalArgumentException("The directory " + directory.getAbsolutePath() + " is not a directory");
 
 		List<File> files = new ArrayList<File>();
 
@@ -318,22 +320,17 @@ public class FileUtils {
 	 *            If true, will delete all files into the directory recursively.
 	 *            If false, delete only the files into the specified directory.
 	 * @return true if the directory was successfully delete and false if was
-	 *         not
-	 * @throws JMacroException
+	 *         not @
 	 */
-	public static Boolean deleteDirectory(File directory, Boolean recursive)
-			throws JMacroException {
+	public static Boolean deleteDirectory(File directory, Boolean recursive) {
 		if (directory == null)
-			throw new JMacroException("The directory cannot be null");
+			throw new IllegalArgumentException("The directory cannot be null");
 		if (!directory.exists())
-			throw new JMacroException("The directory "
-					+ directory.getAbsolutePath() + " does not exists");
+			throw new IllegalArgumentException("The directory " + directory.getAbsolutePath() + " does not exists");
 		if (!directory.canRead())
-			throw new JMacroException("The directory "
-					+ directory.getAbsolutePath() + " could not be read");
+			throw new IllegalArgumentException("The directory " + directory.getAbsolutePath() + " could not be read");
 		if (!directory.isDirectory())
-			throw new JMacroException("The directory "
-					+ directory.getAbsolutePath() + " is not a directory");
+			throw new IllegalArgumentException("The directory " + directory.getAbsolutePath() + " is not a directory");
 
 		List<File> files = readFiles(directory, recursive, true);
 
@@ -351,12 +348,10 @@ public class FileUtils {
 	 * @param recursive
 	 * @param filter
 	 */
-	public static void deleteFiles(File directory, Boolean recursive,
-			FileFilter filter) {
+	public static void deleteFiles(File directory, Boolean recursive, FileFilter filter) {
 		if (directory == null)
-			throw new JMacroException("The directory cannot be null");
-		List<File> files = FileUtils
-				.readDirectory(directory, recursive, filter);
+			throw new IllegalArgumentException("The directory cannot be null");
+		List<File> files = FileUtils.readDirectory(directory, recursive, filter);
 
 		for (File file : files) {
 			file.delete();
@@ -367,17 +362,15 @@ public class FileUtils {
 	 * Create a temporary file in java temp files
 	 * 
 	 * @param name
-	 * @return
-	 * @throws JMacroException
+	 * @return @
 	 */
-	public static File createTempFile(String name) throws JMacroException {
+	public static File createTempFile(String name) {
 		File file = null;
 
 		try {
-			file = new File(System.getProperty("java.io.tmpdir")
-					.concat(File.separator).concat(name));
+			file = new File(System.getProperty("java.io.tmpdir").concat(File.separator).concat(name));
 		} catch (Exception e) {
-			throw new JMacroException(e);
+			throw new IllegalArgumentException(e);
 		}
 
 		return file;
@@ -388,21 +381,19 @@ public class FileUtils {
 	 * 
 	 * @param directory
 	 *            the directory name
-	 * @return a temporary file
-	 * @throws JMacroException
+	 * @return a temporary file @
 	 */
-	public static File createTempDir(String directory) throws JMacroException {
+	public static File createTempDir(String directory) {
 		File dir = null;
 
 		try {
-			dir = new File(System.getProperty("java.io.tmpdir")
-					.concat(File.separator).concat(directory));
+			dir = new File(System.getProperty("java.io.tmpdir").concat(File.separator).concat(directory));
 			if (dir.exists())
 				dir.delete();
 			dir.mkdirs();
 			dir.deleteOnExit();
 		} catch (Exception e) {
-			throw new JMacroException(e);
+			throw new IllegalArgumentException(e);
 		}
 
 		return dir;
@@ -411,17 +402,14 @@ public class FileUtils {
 	/**
 	 * Create a temp directory
 	 * 
-	 * @return New temporary file folder
-	 * @throws JMacroException
+	 * @return New temporary file folder @
 	 */
-	public static File createTempDir() throws JMacroException {
-		return FileUtils.createTempDir(new SimpleDateFormat("yyyyMMddHmsS")
-				.format(new Date()));
+	public static File createTempDir() {
+		return FileUtils.createTempDir(new SimpleDateFormat("yyyyMMddHmsS").format(new Date()));
 	}
 
-	public static File createTempFile() throws JMacroException {
-		return FileUtils.createTempFile(new SimpleDateFormat("yyyyMMddHmsS")
-				.format(new Date()).concat(".dat"));
+	public static File createTempFile() {
+		return FileUtils.createTempFile(new SimpleDateFormat("yyyyMMddHmsS").format(new Date()).concat(".dat"));
 	}
 
 	/**
@@ -459,7 +447,7 @@ public class FileUtils {
 			if (file.getName().equals(name))
 				return file;
 		}
-		throw new JMacroException("The file '" + name + "' cannot be found");
+		throw new IllegalArgumentException("The file '" + name + "' cannot be found");
 	}
 
 	public static File downloadFile(String url) {
@@ -472,12 +460,9 @@ public class FileUtils {
 			filename = new SimpleDateFormat("yyyyMMddHmmS").format(new Date());
 
 		try {
-			BufferedInputStream in = new BufferedInputStream(
-					new URL(url).openStream());
-			java.io.FileOutputStream fos = new java.io.FileOutputStream(path
-					+ File.separator + filename);
-			java.io.BufferedOutputStream bout = new BufferedOutputStream(fos,
-					1024);
+			BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
+			java.io.FileOutputStream fos = new java.io.FileOutputStream(path + File.separator + filename);
+			java.io.BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
 			byte data[] = new byte[1024];
 			int count;
 
@@ -489,9 +474,9 @@ public class FileUtils {
 			fos.close();
 			in.close();
 		} catch (MalformedURLException e) {
-			throw new JMacroException(e);
+			throw new IllegalArgumentException(e);
 		} catch (IOException e) {
-			throw new JMacroException(e);
+			throw new IllegalArgumentException(e);
 		}
 
 		return new File(path + File.separator + filename);
@@ -501,18 +486,15 @@ public class FileUtils {
 	 * Returns list of lines
 	 * 
 	 * @param file
-	 * @return
-	 * @throws JMacroException
+	 * @return @
 	 */
-	public static List<String> readFileLines(File file) throws JMacroException {
+	public static List<String> readFileLines(File file) {
 		if (file == null)
-			throw new JMacroException("The file cannot be null");
+			throw new IllegalArgumentException("The file cannot be null");
 		if (!file.exists())
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " does not exists");
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " does not exists");
 		if (!file.canRead())
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " could not be read");
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " could not be read");
 
 		List<String> lines = new ArrayList<String>();
 
@@ -531,24 +513,22 @@ public class FileUtils {
 			bufferedReader.close();
 			fileReader.close();
 		} catch (FileNotFoundException e) {
-			throw new JMacroException(e);
+			throw new IllegalArgumentException(e);
 		} catch (IOException e) {
-			throw new JMacroException(e);
+			throw new IllegalArgumentException(e);
 		}
 
 		return lines;
 	}
 
-	public static void unzip(File file, File directory) throws JMacroException {
+	public static void unzip(File file, File directory) {
 		fileValidation(file);
 		fileValidation(directory);
 
 		if (!ZIP_FILES_FILTER.accept(file))
-			throw new JMacroException("The file " + directory.getAbsolutePath()
-					+ " is not a valid zip file");
+			throw new IllegalArgumentException("The file " + directory.getAbsolutePath() + " is not a valid zip file");
 		if (!directory.canWrite())
-			throw new JMacroException("The directory "
-					+ directory.getAbsolutePath() + " could not be writed");
+			throw new IllegalArgumentException("The directory " + directory.getAbsolutePath() + " could not be writed");
 
 		ZipFile zip = null;
 		File tempFile = null;
@@ -581,8 +561,7 @@ public class FileUtils {
 					os = new FileOutputStream(tempFile);
 					int bytesLidos = 0;
 					if (is == null) {
-						throw new ZipException("Erro ao ler a entrada do zip: "
-								+ entry.getName());
+						throw new ZipException("Erro ao ler a entrada do zip: " + entry.getName());
 					}
 					while ((bytesLidos = is.read(buffer)) > 0) {
 						os.write(buffer, 0, bytesLidos);
@@ -603,9 +582,9 @@ public class FileUtils {
 				}
 			}
 		} catch (ZipException e) {
-			LoggerFactory.getLogger(FileUtils.class).error(e.getMessage(), e);
+			e.printStackTrace();
 		} catch (IOException e) {
-			LoggerFactory.getLogger(FileUtils.class).error(e.getMessage(), e);
+			e.printStackTrace();
 		} finally {
 			if (zip != null) {
 				try {
@@ -616,7 +595,7 @@ public class FileUtils {
 		}
 	}
 
-	public static void zip(File file, File directory) throws JMacroException {
+	public static void zip(File file, File directory) {
 
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
@@ -630,9 +609,9 @@ public class FileUtils {
 			bos = new BufferedOutputStream(fos, BUFFER_SIZE);
 			zip(bos, directory);
 		} catch (FileNotFoundException e) {
-			LoggerFactory.getLogger(FileUtils.class).error(e.getMessage(), e);
+			e.printStackTrace();
 		} catch (IOException e) {
-			LoggerFactory.getLogger(FileUtils.class).error(e.getMessage(), e);
+			e.printStackTrace();
 		} finally {
 			if (bos != null) {
 				try {
@@ -649,7 +628,7 @@ public class FileUtils {
 		}
 	}
 
-	public static void zip(File file, List<File> files) throws JMacroException {
+	public static void zip(File file, List<File> files) {
 
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
@@ -663,9 +642,9 @@ public class FileUtils {
 			bos = new BufferedOutputStream(fos, BUFFER_SIZE);
 			zip(bos, files);
 		} catch (FileNotFoundException e) {
-			LoggerFactory.getLogger(FileUtils.class).error(e.getMessage(), e);
+			e.printStackTrace();
 		} catch (IOException e) {
-			LoggerFactory.getLogger(FileUtils.class).error(e.getMessage(), e);
+			e.printStackTrace();
 		} finally {
 			if (bos != null) {
 				try {
@@ -682,8 +661,7 @@ public class FileUtils {
 		}
 	}
 
-	public static void zip(OutputStream os, File directory)
-			throws JMacroException {
+	public static void zip(OutputStream os, File directory) {
 		ZipOutputStream zos = null;
 
 		try {
@@ -700,8 +678,7 @@ public class FileUtils {
 		}
 	}
 
-	public static void zip(OutputStream os, List<File> files)
-			throws JMacroException {
+	public static void zip(OutputStream os, List<File> files) {
 		ZipOutputStream zos = null;
 
 		try {
@@ -720,8 +697,7 @@ public class FileUtils {
 		}
 	}
 
-	private static void zipSupport(ZipOutputStream zos, File file,
-			String initialPath) throws JMacroException {
+	private static void zipSupport(ZipOutputStream zos, File file, String initialPath) {
 
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
@@ -738,8 +714,7 @@ public class FileUtils {
 				String zipPath = null;
 				int idx = file.getAbsolutePath().indexOf(initialPath);
 				if (idx >= 0) {
-					zipPath = file.getAbsolutePath().substring(
-							idx + initialPath.length() + 1);
+					zipPath = file.getAbsolutePath().substring(idx + initialPath.length() + 1);
 				}
 				ZipEntry entrada = new ZipEntry(zipPath);
 				zos.putNextEntry(entrada);
@@ -752,7 +727,7 @@ public class FileUtils {
 				}
 			}
 		} catch (IOException e) {
-			LoggerFactory.getLogger(FileUtils.class).error(e.getMessage(), e);
+			e.printStackTrace();
 		} finally {
 			if (bis != null) {
 				try {
@@ -769,44 +744,106 @@ public class FileUtils {
 		}
 	}
 
-	/**
-	 * Generic File validation
-	 * 
-	 * @param file
-	 * @throws JMacroException
-	 */
-	public static void fileValidation(File file) throws JMacroException {
+	public static void fileValidation(File file) {
 		if (file == null)
-			throw new JMacroException("The file cannot be null");
+			throw new IllegalArgumentException("The file cannot be null");
 		if (!file.exists())
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " does not exists");
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " does not exists");
 		if (!file.canRead())
-			throw new JMacroException("The file " + file.getAbsolutePath()
-					+ " could not be read");
+			throw new IllegalArgumentException("The file " + file.getAbsolutePath() + " could not be read");
 	}
 
-	public static byte[] toByteArray(File file) throws JMacroException {
-		fileValidation(file);
-
-		try {
-			return IOUtils.toByteArray(new FileInputStream(file));
-		} catch (Exception e) {
-			throw new JMacroException(e);
-		}
-	}
-
-	public static File fromByteArray(byte[] bytes, String name)
-			throws JMacroException {
+	public static File fromByteArray(byte[] bytes, String name) {
 		try {
 			File file = createTempFile(name);
-			BufferedOutputStream bos = new BufferedOutputStream(
-					new FileOutputStream(file));
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
 			bos.write(bytes);
 			bos.close();
 			return file;
 		} catch (Exception e) {
-			throw new JMacroException(e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void copy(File source, File target) {
+		if (source.isDirectory()) {
+			copyDirectory(source, target);
+		} else {
+			copyFile(source, target);
+		}
+	}
+
+	public static void copyDirectory(File source, File target) {
+		try {
+			if (!target.exists()) {
+				target.mkdirs();
+			}
+
+			String[] files = source.list();
+
+			for (String file : files) {
+				File srcFile = new File(source, file);
+				File destFile = new File(target, file);
+				if (srcFile.isDirectory()) {
+					copyDirectory(srcFile, destFile);
+				} else {
+					copyFile(srcFile, destFile);
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void readInputStream(InputStream inputStream, File target) {
+		try {
+			OutputStream out = new FileOutputStream(target);
+
+			byte[] buffer = new byte[1024];
+
+			int length;
+			// copy the file content in bytes
+			while ((length = inputStream.read(buffer)) > 0) {
+				out.write(buffer, 0, length);
+			}
+
+			inputStream.close();
+			out.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void copyFile(File source, File target) {
+		try {
+			InputStream in = new FileInputStream(source);
+			OutputStream out = new FileOutputStream(target);
+
+			byte[] buffer = new byte[1024];
+
+			int length;
+			// copy the file content in bytes
+			while ((length = in.read(buffer)) > 0) {
+				out.write(buffer, 0, length);
+			}
+
+			in.close();
+			out.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static String getFileExtension(File file) {
+		fileValidation(file);
+
+		String name = file.getName();
+
+		if (name.indexOf(".") > -1) {
+			String extension = name.substring(name.lastIndexOf(".") + 1);
+			return extension;
+		} else {
+			return null;
 		}
 	}
 }

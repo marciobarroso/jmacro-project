@@ -1,137 +1,85 @@
 package com.icodeuplay.jmacro.app;
 
-import java.awt.Font;
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.icodeuplay.jmacro.app.common.ApplicationFrame;
-import com.icodeuplay.jmacro.app.screens.about.AboutView;
-import com.icodeuplay.jmacro.app.screens.help.HelpView;
-import com.icodeuplay.jmacro.app.screens.initial.InitialPanel;
+import com.icodeuplay.jmacro.app.common.AbstractSystemTrayApplication;
 import com.icodeuplay.jmacro.app.util.ImageUtils;
 import com.icodeuplay.jmacro.app.util.LookAndFeelSelector;
 import com.icodeuplay.jmacro.common.exceptions.JMacroException;
-import com.icodeuplay.jmacro.common.util.Benchmark;
+import com.icodeuplay.jmacro.common.util.FileUtils;
 import com.icodeuplay.jmacro.common.util.MessageUtils;
-import com.icodeuplay.jmacro.common.util.ScreenUtils;
 
 /**
  * Application main class
  */
-public class Main {
+public class Main extends AbstractSystemTrayApplication {
 
-	private ApplicationFrame containner;
-	private JMenu applicationMenu;
-	private JMenu helpMenu;
+	private MenuItem record;
+	private MenuItem run;
+	private MenuItem settings;
 
-	private JMenuItem exit;
+	public void populateMenu() {
+		this.record = new MenuItem(MessageUtils.getString("app.label.new"));
+		this.addApplicationMenuItem(record);
 
-	private JMenuItem processManagerItem;
-
-	private JMenuItem helpMenuItem;
-	private JMenuItem aboutMenuItem;
-	private JMenuItem themeMenuItem;
-
-	private Benchmark benchmark;
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
-
-	public Main() {
-		try {
-			this.benchmark = new Benchmark();
-
-			this.containner = ApplicationFrame.getInstance(ScreenUtils.getBounds(800, 600, true));
-			LOGGER.debug("Initialize main container in " + this.benchmark.getPartialTime());
-
-			this.containner.addPanel(new InitialPanel());
-			LOGGER.debug("Load initialPanel in " + this.benchmark.getPartialTime());
-
-			this.populateMenu();
-			LOGGER.debug("Populate menu in " + this.benchmark.getPartialTime());
-
-			this.benchmark.end();
-			LOGGER.debug("Finish in " + this.benchmark.getTime());
-			
-			this.containner.setStatusMessage("Application Successfull loaded");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected void populateMenu() {
-		this.applicationMenu = new JMenu(MessageUtils.getString("application.label.menu.application"));
-		this.helpMenu = new JMenu(MessageUtils.getString("application.label.menu.help"));
-
-		this.processManagerItem = new JMenuItem(
-				MessageUtils.getString("application.label.menu.application.processmanager"));
-		this.exit = new JMenuItem(MessageUtils.getString("application.label.menu.application.exit"));
-
-		this.helpMenuItem = new JMenuItem(MessageUtils.getString("application.label.menu.help"));
-		this.aboutMenuItem = new JMenuItem(MessageUtils.getString("application.label.menu.help.about"));
-		this.themeMenuItem = new JMenuItem(MessageUtils.getString("application.label.menu.help.theme"));
-
-		this.processManagerItem.setIcon(ImageUtils.getImageByKey("app.icon.processmanager"));
-		this.exit.setIcon(ImageUtils.getImageByKey("app.icon.exit"));
-		this.helpMenuItem.setIcon(ImageUtils.getImageByKey("app.icon.help"));
-		this.aboutMenuItem.setIcon(ImageUtils.getImageByKey("app.icon.about"));
-		this.themeMenuItem.setIcon(ImageUtils.getImageByKey("app.icon.theme"));
-
-		this.applicationMenu.add(processManagerItem);
-		this.applicationMenu.addSeparator();
-		this.applicationMenu.add(exit);
-
-		this.helpMenu.add(helpMenuItem);
-		this.helpMenu.add(themeMenuItem);
-		this.helpMenu.addSeparator();
-		this.helpMenu.add(aboutMenuItem);
-
-		this.containner.addMenu(applicationMenu);
-		this.containner.addMenu(helpMenu);
-
-		this.exit.addActionListener(new ActionListener() {
+		record.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (MessageUtils.showConfirmDialog(null, MessageUtils.getString("application.messages.exit.confirm"),
-						MessageUtils.getString("application.messages.exit.confirm.title"),
-						MessageUtils.INFORMATION_MESSAGE_TYPE)) {
-					System.exit(1);
+				// new 
+				if( record.getLabel().equals(MessageUtils.getString("app.label.new")) ) {
+					
+					// set label stop
+					record.setLabel(MessageUtils.getString("app.label.stop"));
+					ImageIcon image = ImageUtils.getImage(MessageUtils.getString("app.icon.recording"));
+					String message = MessageUtils.getString("app.messages.recording.macro");
+					setApplicationIcon(image, message);					
+				
+				} else { // stop
+					
+					record.setLabel(MessageUtils.getString("app.label.new"));
+					setDefaultApplicationIcon();
+					
 				}
 			}
 		});
+		
+		this.run = new MenuItem(MessageUtils.getString("app.label.run"));
+		this.addApplicationMenuItem(run);
 
-		this.helpMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new HelpView();
+		this.settings = new MenuItem(MessageUtils.getString("app.label.settings"));
+		this.addApplicationMenuItem(settings);
+
+		MenuItem help = new MenuItem(MessageUtils.getString("app.label.help"));
+		help.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					String help = FileUtils.createTempDir(MessageUtils.getString("app.id") + File.separator + "help")
+							.getAbsolutePath() + File.separator;
+					Runtime.getRuntime().exec("hh.exe " + help + "index.html");
+				} catch (Exception e) {
+				}
 			}
 		});
+		this.addSystemMenuItem(help);
 
-		this.themeMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				LookAndFeelSelector.selectStyle(Main.this.containner);
-			}
-		});
+	}
 
-		this.aboutMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new AboutView();
-			}
-		});
-
-		applicationMenu.setFont(new Font("Verdana", Font.PLAIN, 11));
-		helpMenu.setFont(new Font("Verdana", Font.PLAIN, 11));
-		exit.setFont(new Font("Verdana", Font.PLAIN, 11));
-		processManagerItem.setFont(new Font("Verdana", Font.PLAIN, 11));
-		helpMenuItem.setFont(new Font("Verdana", Font.PLAIN, 11));
-		aboutMenuItem.setFont(new Font("Verdana", Font.PLAIN, 11));
-		themeMenuItem.setFont(new Font("Verdana", Font.PLAIN, 11));
+	@Override
+	public void beforeRun() {
+		try {
+			// copy help content to temp folder
+			File helpDir = FileUtils.createTempDir(MessageUtils.getString("app.id") + File.separator + "help");
+			File source = new File(getClass().getResource("/help").toURI());
+			FileUtils.copyDirectory(source, helpDir);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
