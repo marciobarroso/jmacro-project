@@ -60,6 +60,8 @@ public class Main {
 
 			this.benchmark.end();
 			LOGGER.debug("Finish in " + this.benchmark.getTime());
+			
+			this.containner.setStatusMessage("Application Successfull loaded");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
