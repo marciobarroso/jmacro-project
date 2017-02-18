@@ -1,9 +1,6 @@
-*DS_Store
-*/.settings
-*/.project
-*/.classpath
-*/target
-*/logs
-.project
-.classpath
-.settings
+**/DS_Store
+**/.settings
+**/bin
+**/target
+**/.project
+**/.classpath
