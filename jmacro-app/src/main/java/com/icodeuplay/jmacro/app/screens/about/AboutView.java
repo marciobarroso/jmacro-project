@@ -26,13 +26,13 @@ import com.icodeuplay.jmacro.common.util.ScreenUtils;
  * Required informations set on messages.properties:
  * </p>
  * <ul>
- * <li>application.title</li>
- * <li>application.images.icon.app</li>
- * <li>application.images.about</li>
- * <li>application.label.version</li>
- * <li>application.label.created</li>
- * <li>application.messages.about.copyrights</li>
- * <li>application.messages.about.vendor</li>
+ * <li>app.title</li>
+ * <li>app.icon.64</li>
+ * <li>app.images.about</li>
+ * <li>app.label.version</li>
+ * <li>app.label.created</li>
+ * <li>app.messages.about.copyrights</li>
+ * <li>app.messages.about.vendor</li>
  * </ul>
  */
 public class AboutView extends JFrame {
@@ -61,7 +61,7 @@ public class AboutView extends JFrame {
 		this.setBounds(ScreenUtils.getBounds(573, 310, true));
 		this.setFont(new Font("Verdana", Font.PLAIN, 11));
 		ImageUtils.setAppIcons(this);
-		this.setTitle(MessageUtils.getString("application.title"));
+		this.setTitle(MessageUtils.getString("app.title"));
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		this.initComponents();
@@ -101,13 +101,13 @@ public class AboutView extends JFrame {
 		labelImage.setHorizontalAlignment(SwingConstants.CENTER);
 		logoPanel.add(labelImage, BorderLayout.CENTER);
 
-		labelTitle = new JLabel(MessageUtils.getString("application.title"));
+		labelTitle = new JLabel(MessageUtils.getString("app.title"));
 		labelTitle.setForeground(new Color(30, 144, 255));
 		labelTitle.setBounds(10, 11, 286, 14);
 		labelTitle.setFont(new Font("Verdana", Font.PLAIN, 11));
 		infoPanel.add(labelTitle);
 
-		labelVersion = new JLabel(MessageUtils.getString("application.label.version"));
+		labelVersion = new JLabel(MessageUtils.getString("app.label.version"));
 		labelVersion.setFont(new Font("Verdana", Font.PLAIN, 11));
 		labelVersion.setBounds(10, 49, 59, 14);
 		infoPanel.add(labelVersion);
@@ -117,7 +117,7 @@ public class AboutView extends JFrame {
 		labelVersionValue.setBounds(79, 49, 217, 14);
 		infoPanel.add(labelVersionValue);
 
-		labelCreated = new JLabel(MessageUtils.getString("application.label.created"));
+		labelCreated = new JLabel(MessageUtils.getString("app.label.created"));
 		labelCreated.setFont(new Font("Verdana", Font.PLAIN, 11));
 		labelCreated.setBounds(10, 74, 59, 14);
 		infoPanel.add(labelCreated);
@@ -127,13 +127,13 @@ public class AboutView extends JFrame {
 		labelCreatedValue.setBounds(79, 74, 217, 14);
 		infoPanel.add(labelCreatedValue);
 
-		labelVendor = new JLabel(MessageUtils.getString("application.messages.about.vendor"));
+		labelVendor = new JLabel(MessageUtils.getString("app.messages.about.vendor"));
 		labelVendor.setFont(new Font("Verdana", Font.PLAIN, 11));
 		labelVendor.setVerticalAlignment(SwingConstants.BOTTOM);
 		labelVendor.setBounds(10, 168, 286, 36);
 		infoPanel.add(labelVendor);
 
-		labelCopyrights = new JLabel(MessageUtils.getString("application.messages.about.copyrights"));
+		labelCopyrights = new JLabel(MessageUtils.getString("app.messages.about.copyrights"));
 		labelCopyrights.setVerticalAlignment(SwingConstants.TOP);
 		labelCopyrights.setFont(new Font("Verdana", Font.PLAIN, 11));
 		labelCopyrights.setBounds(10, 99, 286, 55);
